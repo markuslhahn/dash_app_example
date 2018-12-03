@@ -31,7 +31,6 @@ years = df['TIME'].unique()
 units = df['UNIT'].unique()
 items = df['NA_ITEM'].unique()
 
-
 markdown_text = '''
 #### Markus L Hahn Final Project
 
@@ -39,8 +38,9 @@ markdown_text = '''
 '''
 
 markdown_text2 = '''
-
 ### Graph 2: Country Measure Timeline
+
+Hover over the markers in the first graph to manipulate this graph
 '''
 
 markdown_text3 = '''
@@ -91,7 +91,7 @@ app.layout = html.Div([
 
     ]),
     
-    dcc.Graph(id='1-graphic'),
+    dcc.Graph(id='1-graphic', hoverData={'points': [{'customdata': 'Belgium'}]}),
 
     dcc.Slider(
         id='year--slider',
@@ -116,16 +116,7 @@ app.layout = html.Div([
             ),
         ],
         style={'width': '40%', 'display': 'inline-block'}),
-        
-        html.Div([
-            dcc.Dropdown(
-                id='2yaxis-column',
-                options=[{'label': i, 'value': i} for i in countries],
-                value='France'
-            ),
-        ],
-        style={'width': '40%', 'display': 'inline-block'}),
-        
+
         html.Div([
             dcc.RadioItems(
                 id='unit',
@@ -137,7 +128,7 @@ app.layout = html.Div([
         style={'width': '100%', 'display': 'inline-block'}),
 
     ]),
-    
+       
     dcc.Graph(id='2-graphic'),
     
     html.Div([
@@ -162,7 +153,8 @@ def update_graph(xaxis_column_name, yaxis_column_name, unit,
         'data': [go.Scatter(
             x=dff[dff['NA_ITEM'] == xaxis_column_name]['Value'],
             y=dff[dff['NA_ITEM'] == yaxis_column_name]['Value'],
-            text=dff[dff['NA_ITEM'] == yaxis_column_name]['Value'],
+            text=dff[dff['NA_ITEM'] == yaxis_column_name]['GEO'],
+            customdata=dff[dff['NA_ITEM'] == yaxis_column_name]['GEO'],            
             mode='markers',
             marker={
                 'size': 15,
@@ -184,21 +176,23 @@ def update_graph(xaxis_column_name, yaxis_column_name, unit,
         )
     }
 
+
 @app.callback(
     dash.dependencies.Output('2-graphic', 'figure'),
     [dash.dependencies.Input('2xaxis-column', 'value'),
-     dash.dependencies.Input('2yaxis-column', 'value'),
+     dash.dependencies.Input('1-graphic', 'hoverData'),
      dash.dependencies.Input('unit', 'value')])
 
-def update_graph(xaxis_column_name, yaxis_column_name, unit):
+def update_graph(xaxis_column_name, hoverData, unit):
     
-    dff = df[(df['GEO'] == yaxis_column_name) & (df['UNIT'] == unit)]
+    country_name = hoverData['points'][0]['customdata']
+    dff = df[(df['GEO'] == country_name) & (df['UNIT'] == unit)]
     
     return {
         'data': [go.Scatter(
             x=dff[dff['NA_ITEM'] == xaxis_column_name]['TIME'],
             y=dff[dff['NA_ITEM'] == xaxis_column_name]['Value'],
-            text=dff[dff['NA_ITEM'] == yaxis_column_name]['GEO'],
+            text=dff[dff['NA_ITEM'] == country_name]['GEO'],
             mode='lines+markers',
             marker={
                 'size': 10,
@@ -208,13 +202,6 @@ def update_graph(xaxis_column_name, yaxis_column_name, unit):
             line=dict(shape='spline', color = ('red'), width = 6)
         )],
         'layout': go.Layout(
-            
-            xaxis={
-                'title': xaxis_column_name,
-            },
-            yaxis={
-                'title': yaxis_column_name,
-            },
             margin={'l': 60, 'b': 60, 't': 40, 'r': 40},
             hovermode='closest'
             
