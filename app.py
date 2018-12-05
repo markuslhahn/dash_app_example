@@ -32,15 +32,7 @@ units = df['UNIT'].unique()
 items = df['NA_ITEM'].unique()
 
 markdown_text = '''
-#### Markus L Hahn Final Project
-
-### Graph 1: Measure Scatterplot
-'''
-
-markdown_text2 = '''
-### Graph 2: Country Measure Timeline
-
-Hover over the markers in the first graph to manipulate this graph
+![Image](https://www.migueldiaz.com/images/clientes/esade.png)
 '''
 
 markdown_text3 = '''
@@ -54,44 +46,52 @@ app.layout = html.Div([
     
     html.Div([
     dcc.Markdown(children=markdown_text)
-    ]),
+    ],
+    style ={"float":"right",'marginTop':20}),
     
-    html.Div(children='''
-        Dash: A web application framework for Python.
-    '''),
+    html.H2("Markus L Hahn: Final Assignment", style ={"textAlign":"left","color": "RGB(168, 27, 25)"}),
+    html.H4("Cloud Computing, 03.12.2018", style ={"textAlign":"left","color": "RGB(168, 27, 25)"}),
+    html.H3("Graph 1: Relative Measures", style ={"textAlign":"center","color": "RGB(232, 38, 34)",'marginBottom': 20, 'marginTop':20}),
     
     html.Div([
         html.Div([
+            html.Label('Pick an indicator for the x-axis',style={'width': '100%', 'display': 'inline-block',"textAlign":"center"}),            
             dcc.Dropdown(
                 id='xaxis-column',
                 options=[{'label': i, 'value': i} for i in items],
                 value='Value added, gross'
             )
         ],
-        style={'width': '40%', 'display': 'inline-block'}),
+        style={"float":"left","textAlign":"center",'width': '35%', 'display': 'inline-block',"padding-left":100}),
         
         html.Div([
+            html.Label('Pick an indicator for the y-axis',style={'width': '100%', 'display': 'inline-block',"textAlign":"center"}),            
             dcc.Dropdown(
                 id='yaxis-column',
                 options=[{'label': i, 'value': i} for i in items],
                 value='Final consumption expenditure'
             )
         ],
-        style={'width': '40%', 'display': 'inline-block'}),
+        style={"float":"right","textAlign":"center",'width': '35%', 'display': 'inline-block',"padding-right":100}),
         
         html.Div([
+            html.Label('Pick a unit',style={'width': '100%', 'display': 'inline-block',"textAlign":"center"}),
             dcc.RadioItems(
                 id='unit1',
                 options=[{'label': i, 'value': i} for i in units],
                 value='Current prices, million euro',
-                labelStyle={'display': 'inline-block'}
+                labelStyle={'display': 'inline-block'},
+            style={"textAlign":"center"}
             )              
         ],
-        style={'width': '100%', 'display': 'inline-block'}),
+        style={'width': '100%', 'display': 'inline-block', "padding-top":10, "padding-bottom":20}),
 
-    ]),
+    ],style={'width': '100%', 'display': 'inline-block'}
     
-    dcc.Graph(id='1-graphic', hoverData={'points': [{'customdata': 'Belgium'}]}),
+    ),
+    
+    
+    dcc.Graph(id='1-graphic', animate="True", hoverData={'points': [{'customdata': 'Belgium'}]}),
 
     dcc.Slider(
         id='year--slider',
@@ -102,38 +102,43 @@ app.layout = html.Div([
         marks={str(year): str(year) for year in df['TIME'].unique()}
     ),
 
-    html.Div([
-    dcc.Markdown(children=markdown_text2)
-    ]),
-    
+    html.H3("Graph 2: Country Measure Timeline", style ={"textAlign":"center","color": 'RGB(8, 108, 181)','marginBottom': 20, 'marginTop':50}),
+
+    html.H5("Hover over the markers in the first graph to manipulate this graph", style ={"textAlign":"center","color": 'RGB(15, 96, 156)'}),
+
     html.Div([
 
         html.Div([
+            html.Label('Pick an indicator for the y-axis',style={'width': '100%', 'display': 'inline-block',"textAlign":"center"}),            
             dcc.Dropdown(
                 id='2xaxis-column',
                 options=[{'label': i, 'value': i} for i in items],
                 value='Value added, gross'
-            ),
+            )
         ],
-        style={'width': '40%', 'display': 'inline-block'}),
+        style={'width': '35%', 'display': 'inline-block', "padding":20}),
 
         html.Div([
+            html.Label('Pick a unit',style={'width': '100%', 'display': 'inline-block',"textAlign":"center"}),
             dcc.RadioItems(
                 id='unit',
                 options=[{'label': i, 'value': i} for i in units],
                 value='Current prices, million euro',
-                labelStyle={'display': 'inline-block'}
+                labelStyle={'display': 'inline-block'},
+            style={"textAlign":"center"}
             )            
         ],
-        style={'width': '100%', 'display': 'inline-block'}),
+        style={'width': '100%', 'display': 'inline-block', "padding-left":10, "padding-right":20}),
 
-    ]),
+    ],
+    style={"text-align":"center"}
+    ),
        
     dcc.Graph(id='2-graphic'),
     
     html.Div([
     dcc.Markdown(children=markdown_text3)
-    ]),   
+    ],style={"textAlign":"center"}),
 
 ])
 
@@ -151,27 +156,30 @@ def update_graph(xaxis_column_name, yaxis_column_name, unit,
     
     return {
         'data': [go.Scatter(
-            x=dff[dff['NA_ITEM'] == xaxis_column_name]['Value'],
-            y=dff[dff['NA_ITEM'] == yaxis_column_name]['Value'],
-            text=dff[dff['NA_ITEM'] == yaxis_column_name]['GEO'],
-            customdata=dff[dff['NA_ITEM'] == yaxis_column_name]['GEO'],            
+            x=dff[(dff['NA_ITEM'] == xaxis_column_name)&(dff['GEO']==i)]['Value'],
+            y=dff[(dff['NA_ITEM'] == yaxis_column_name)&(dff['GEO']==i)]['Value'],
+            text=dff[(dff['NA_ITEM'] == yaxis_column_name)&(dff['GEO']==i)]['GEO'],
+            customdata=dff[(dff['NA_ITEM'] == yaxis_column_name)&(dff['GEO']==i)]['GEO'],            
             mode='markers',
+            hoveron=("points"),
+            hoverinfo=("text+y+x"),
             marker={
                 'size': 15,
                 'opacity': 0.5,
-                'color': 'red',
                 'line': {'width': 0.5, 'color': 'white'}
-            }
-        )],
+            },
+            name=i[:15])
+                 for i in df.GEO.unique()
+        ],
         'layout': go.Layout(
             
             xaxis={
-                'title': xaxis_column_name,
+                'title': '<b>{}</b>'.format(xaxis_column_name)
             },
             yaxis={
-                'title': yaxis_column_name,
+                'title': '<b>{}</b>'.format(yaxis_column_name)
             },
-            margin={'l': 60, 'b': 60, 't': 40, 'r': 40},
+            margin={'l': 100, 'b': 60, 't': 40, 'r': 40},
             hovermode='closest'
         )
     }
@@ -195,15 +203,22 @@ def update_graph(xaxis_column_name, hoverData, unit):
             text=dff[dff['NA_ITEM'] == country_name]['GEO'],
             mode='lines+markers',
             marker={
-                'size': 10,
+                'size': 11,
                 'color': 'white',
-                'line': {'width': 1, 'color': 'red'}
+                'line': {'width': 3, 'color': 'RGB(8, 108, 181)'}
             },
-            line=dict(shape='spline', color = ('red'), width = 6)
+            line=dict(shape='spline', color = ('RGB(8, 108, 181)'), width = 6)
         )],
         'layout': go.Layout(
-            margin={'l': 60, 'b': 60, 't': 40, 'r': 40},
+            xaxis={
+                'title': "Year",'showgrid': False
+            },
+            yaxis={
+                'title': '<b>{}</b><br><b>{}</b>'.format(country_name, xaxis_column_name)
+            },
+            margin={'l': 100, 'b': 60, 't': 40, 'r': 40},
             hovermode='closest'
+
             
         )
     }
