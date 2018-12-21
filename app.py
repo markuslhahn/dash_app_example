@@ -36,6 +36,11 @@ markdown_text = '''
 ![Image](https://www.migueldiaz.com/images/clientes/esade.png)
 '''
 
+markdown_text2 = '''
+#### *Hover over the markers in the first graph to manipulate this graph*
+
+'''
+
 markdown_text3 = '''
 
 Actual footage of me when the code finally worked:
@@ -109,8 +114,10 @@ app.layout = html.Div([
     html.Hr(),
     
     html.H3("Graph 2: Country Measure Timeline", style ={"textAlign":"center","color": 'RGB(8, 108, 181)','marginBottom': 20, 'marginTop':50}),
-
-    html.H5("Hover over the markers in the first graph to manipulate this graph", style ={"textAlign":"center","color": 'RGB(15, 96, 156)'}),
+    
+    html.Div([
+    dcc.Markdown(children=markdown_text2)
+    ],style={"textAlign":"center","color": 'RGB(15, 96, 156)'}),
 
     html.Div([
 
