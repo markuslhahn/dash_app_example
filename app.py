@@ -10,9 +10,10 @@ import dash_html_components as html
 import plotly.graph_objs as go
 import pandas as pd
 
+
 app = dash.Dash(__name__)
 server = app.server
-app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
+app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/dZVMbK.css"})
 
 df = pd.read_csv("nama_10_gdp_1_Data.csv")
 
@@ -42,8 +43,10 @@ Actual footage of me when the code finally worked:
 ![Image](https://media.giphy.com/media/102h4wsmCG2s12/giphy.gif)
 '''
 
+app.title= "MLH CC Assignment"
+
 app.layout = html.Div([
-    
+
     html.Div([
     dcc.Markdown(children=markdown_text)
     ],
@@ -51,6 +54,7 @@ app.layout = html.Div([
     
     html.H2("Markus L Hahn: Final Assignment", style ={"textAlign":"left","color": "RGB(168, 27, 25)"}),
     html.H4("Cloud Computing, 03.12.2018", style ={"textAlign":"left","color": "RGB(168, 27, 25)"}),
+    html.Hr(),
     html.H3("Graph 1: Relative Measures", style ={"textAlign":"center","color": "RGB(232, 38, 34)",'marginBottom': 20, 'marginTop':20}),
     
     html.Div([
@@ -102,6 +106,8 @@ app.layout = html.Div([
         marks={str(year): str(year) for year in df['TIME'].unique()}
     ),
 
+    html.Hr(),
+    
     html.H3("Graph 2: Country Measure Timeline", style ={"textAlign":"center","color": 'RGB(8, 108, 181)','marginBottom': 20, 'marginTop':50}),
 
     html.H5("Hover over the markers in the first graph to manipulate this graph", style ={"textAlign":"center","color": 'RGB(15, 96, 156)'}),
@@ -135,6 +141,8 @@ app.layout = html.Div([
     ),
        
     dcc.Graph(id='2-graphic'),
+    
+    html.Hr(),
     
     html.Div([
     dcc.Markdown(children=markdown_text3)
@@ -222,6 +230,7 @@ def update_graph(xaxis_column_name, hoverData, unit):
             
         )
     }
+
 
 if __name__ == '__main__':
     app.run_server()
